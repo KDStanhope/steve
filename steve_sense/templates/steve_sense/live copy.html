@@ -1,0 +1,175 @@
+<html>
+
+<head>
+    <script>
+        window.onload = function () {
+            console.log("LOADED");
+
+            //Configuration variables
+            var updateInterval = 2000 //in ms
+            var numberElements = 8000;
+
+            //Globals
+            var updateCount = 0;
+
+            // Chart Objects
+            var HumidityChart = $("#HumidityChart");
+            var TemperatureChart = $("#TemperatureChart");
+            //chart instances & configuration
+
+            var commonOptions = {
+                pointRadius: 0,
+                pointHitRadius: 2,
+                scales: {
+                    color: 'orange',
+                    xAxes: [{
+                        gridLines: { 
+                            color: "#050708", 
+                        },
+                        type: 'time',
+                        time: {
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 100,
+                        }
+                    }]
+                },
+                legend: { display: true },
+                tooltips: {
+                    enabled: true
+                }
+            };
+            var TemperatureChartInstance = new Chart(HumidityChart, {
+                type: 'line',
+                color: 'red',
+                data: {
+                    datasets: [{
+                        label: "RH%",
+                        data: 0,
+                        fill: false,
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        tension: 1,
+                    }]
+                },
+                options: Object.assign({}, commonOptions, {
+                    pointRadius: 0,
+                    title: {
+                        color: 'green',
+                        display: true,
+                        text: "Temperature",
+                        fontSize: 18
+                    }
+                })
+            });
+
+            var HumidityChartInstance = new Chart(TemperatureChart, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: "Tmp",
+                        data: 0,
+                        fill: false,
+                        borderColor: 'blue',
+                        borderWidth: 1,
+                        tension: 2,
+                    }]
+                },
+                options: Object.assign({}, commonOptions, {
+                    title: {
+                        color: '#050708',
+                        display: true,
+                        text: "Humidity",
+                        fontSize: 18
+                    }
+                })
+            });
+
+
+            function addData(data) {
+                if (data) {
+                    TemperatureChartInstance.data.labels.push(new Date());
+                    TemperatureChartInstance.data.datasets.forEach((dataset) => { dataset.data.push(data[0].temperature) });
+                    console.log(data[0].temperature);
+                    HumidityChartInstance.data.labels.push(new Date());
+                    HumidityChartInstance.data.datasets.forEach((dataset) => { dataset.data.push(data[0].humidity) });
+                    if (updateCount > numberElements) {
+                        TemperatureChartInstance.data.labels.shift();
+                        TemperatureChartInstance.data.datasets[0].data.shift();
+                        HumidityChartInstance.data.labels.shift();
+                        HumidityChartInstance.data.datasets[0].data.shift();
+                    }
+                    else updateCount++;
+                    TemperatureChartInstance.update();
+                    HumidityChartInstance.update();
+                }
+            };
+
+            function updateData() {
+                console.log("Update Data");
+                $.get("http://10.0.0.8/latest", addData);
+                setTimeout(updateData, updateInterval);
+            }
+
+            updateData();
+        }
+    </script>
+    <style>
+        .container {
+            display: flex;
+
+        }
+
+        .label {
+            flex: 1;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .temperature {
+            flex: 3;
+            text-align: center;
+            background-color: rgb(255, 255, 255);
+            margin: 10px;
+        }
+
+        .humidity {
+            flex: 3;
+            text-align: center;
+            background-color: rgb(255, 255, 255);
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+</head>
+
+<body>
+    <h1>Live Atmospheric Data - Tent 1</h1>
+    <div id="labelAccel" class="label">
+
+    </div>
+
+    <div id="accelContainer" class="container">
+        <div id="xAccel" class="temperature">
+            <canvas id="HumidityChart"></canvas>
+        </div>
+        <!--xAccel-->
+        <div id="yAccel" class="humidity">
+            <canvas id="TemperatureChart"></canvas>
+        </div>
+        <!--yAccel-->
+    </div>
+
+</body>
+
+</html>
