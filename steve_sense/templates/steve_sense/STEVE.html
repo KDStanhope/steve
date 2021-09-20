@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/gauge.min.js' %}"></script>
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/chart.min.js' %}"></script>
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/chartjs-plugin-crosshair.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+    <style>
+        body {
+            background: rgb(31, 31, 31) !important;
+        }
+
+        h1.shine {
+            text-shadow: 0px 0px 20px #666666;
+        }
+
+        h2.shine {
+            text-shadow: 0px 0px 18px #666666;
+        }
+
+        h3.shine {
+            text-shadow: 0px 0px 16px #666666;
+        }
+
+        h4.shine {
+            text-shadow: 0px 0px 12px #666666;
+        }
+
+        h5.shine {
+            text-shadow: 0px 0px 8px #666666;
+        }
+
+        h6.shine {
+            text-shadow: 0px 0px 8px #666666;
+        }
+
+
+        /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+
+        .img-fluid {
+            height: 90px;
+            filter: invert(100%);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-auto">
+                <input type="image" id="myimage" src="[...]" alt="TEST" />
+            </div>
+            <div class="col-md-auto">
+                {% load static %}
+                <img src="{% static 'SteveSenseLogo.png' %}" class="img-fluid" alt="...">
+            </div>
+            <div class="col-md-auto">
+                <input type="image" id="myimage" src="[...]" alt="TEST" />
+            </div>
+        </div>
+
+        <hr class="text-light">
+
+        <div class="row justify-content-center gap-6">
+
+            <!-- temperature block -->
+            <div class="col-md-auto shadow mx-5 p-3 mb-2 rounded">
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <h1 class="text-light">Temperature</h1>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <div class="row justify-content-center">
+                            <canvas id='temperature' height="250" width="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <h2 id="temperature_element" class="shine text-light"> c°</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- temperature block -->
+            <!-- humidity block -->
+            <div class="col-md-auto shadow mx-5 p-3 mb-2 rounded">
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <h1 class="text-light">Humidity</h1>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <div class="row justify-content-center">
+                            <canvas id='humidity' height="250" width="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <h2 id="humidity_element" class="shine text-light"> %</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- humidity block -->
+            <!-- VPD block -->
+            <div class="col-md-auto shadow mx-5 p-3 mb-2 rounded">
+                <div class="row justify-content-center">
+                    <div class="col-md-auto">
+                        <h1 class="text-light">VPD</h1>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <div class="row justify-content-center">
+                            <canvas id='VPD' height="250" width="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-auto px-3">
+                        <h2 id="vpd_element" class="shine text-light"> kPa</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- VPD block -->
+        </div>
+        <!---->
+        <br>
+        <div class="col-sm-auto">
+            <div class="row justify-content-center">
+                <!-- LUX -->
+                <div class="col-sm-auto shadow mx-5 p-3 mb-2 rounded">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h3 class="text-light">Luminous Flux</h3>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <div class="row justify-content-center">
+                                <canvas id='lux' width="250" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h4 id="lux_element" class="shine text-light"> Lux</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- LUX -->
+                <!-- CO2 -->
+                <div class="col-sm-auto shadow mx-5 p-3 mb-2 rounded">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h3 class="text-light">CO2 Concentration</h3>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <div class="row justify-content-center">
+                                <canvas id='co2' width="250" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h4 id='co2_element' class="shine text-light"> ppm</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- CO2 -->
+                <!-- SoilMOISTURE -->
+                <div class="col-sm-auto shadow mx-5 p-3 mb-2 rounded">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h3 class="text-light">Soil Moisture Est.</h3>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <div class="row justify-content-center">
+                                <canvas id='soil'  width="250" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h4 id='soil_element' class="shine text-light"> %</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- SoilMOISTURE -->
+                <!-- BIOMASS -->
+                <div class="col-sm-auto shadow mx-5 p-3 mb-2 rounded">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h3 class="text-light">Biomass Est.</h4>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <div class="row justify-content-center">
+                                <canvas id='biomass'  width="250" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-auto px-3">
+                            <h4 id="biomass_element" class="shine text-light"> g</h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- BIOMASS -->
+            </div>
+        </div>
+
+        <hr class="text-light">
+
+    </div>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <canvas id="enviro_chart" height="500"></canvas>
+        </div>
+        <div class="row justify-content-center">
+            <canvas id="vpd_chart" height="500"></canvas>
+        </div>
+    </div>
+
+</body>
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/dashboardElements.js' %}"></script>
+<script>
+
+</script>
+
+
+</html>
