@@ -6,7 +6,7 @@ from django.core import serializers
 
 import json
 #Note I am using the django-pandas library to try amke shit quicker
-from .models import Sensor_Logs
+from .models import Sensor_Logs, Environmental_Settings
 
 # Create your views here.
 def data_aggregator(data,interval):
@@ -64,4 +64,9 @@ def latest_samples(request):
     Sensor_Logs_Objects = Sensor_Logs.objects.filter(time__gt=time_frame).order_by('-time')[:1]
     crispJSONPayload = single_record(Sensor_Logs_Objects)
     return JsonResponse(crispJSONPayload, safe=False)
+
+def parameters(request):
+    Environmental_Settings_Objects = Environmental_Settings.objects.filter()[:1]
+    crispJSONPayload = serializers.serialize('json', Environmental_Settings_Objects)
+    return JsonResponse(json.loads(crispJSONPayload), safe=False)
 

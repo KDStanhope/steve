@@ -11,5 +11,6 @@ urlpatterns = [
     path('last_24_hours', views.last_24_hours, name='json_data'),
     path('last_48_hours', views.last_48_hours, name='json_data'),
     path('latest', views.latest_samples, name='json_data'),
+    path('parameters', views.parameters, name='json_data'),
     path('sample_submission', sample_submission.sample_log, name='sample_submission')
 ]
