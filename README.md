@@ -2,6 +2,8 @@
 
 ## Who or what is Steve?
 
+I am not Steve.
+
 Steve is a little pet project of mine. Steve is an ecosystem comprised of Steve and Steve Sense. 
 Steve handles all the logic an enviromental controller would by turning on lights and fans and anything else really. 
 Steve also collects environmental data using one of a  number of modular-design sensors quite frequently and keeps a log of it. 
