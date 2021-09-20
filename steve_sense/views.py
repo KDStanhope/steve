@@ -6,7 +6,7 @@ from django.core import serializers
 
 import json
 #Note I am using the django-pandas library to try amke shit quicker
-from .models import Atmospheric
+from .models import Sensor_Logs
 
 # Create your views here.
 def data_aggregator(data,interval):
@@ -26,6 +26,8 @@ def single_record(data):
 
     return crispJSONPayload
     
+def steve(request):
+    return render(request, "steve_sense/STEVE.html", {})
 
 def index(request):
     return render(request, "steve_sense/overview.html", {})
@@ -41,32 +43,25 @@ def live(request):
 
 def last_12_hours(request):
     time_frame = datetime.datetime.now() - datetime.timedelta(hours=12)
-    AtmosphericObjects = Atmospheric.objects.filter(time__gt=time_frame).order_by('-time')
-    crispJSONPayload = data_aggregator(AtmosphericObjects,'30S')
+    Sensor_Logs_Objects = Sensor_Logs.objects.filter(time__gt=time_frame).order_by('-time')
+    crispJSONPayload = data_aggregator(Sensor_Logs_Objects,'30S')
     return JsonResponse(crispJSONPayload, safe=False) # No need to aggregate under like 24 hours - it takes long to calculate
 
 def last_24_hours(request):
     time_frame = datetime.datetime.now() - datetime.timedelta(hours=24)
-    AtmosphericObjects = Atmospheric.objects.filter(time__gt=time_frame).order_by('-time')
-    crispJSONPayload = data_aggregator(AtmosphericObjects,'1T')
+    Sensor_Logs_Objects = Sensor_Logs.objects.filter(time__gt=time_frame).order_by('-time')
+    crispJSONPayload = data_aggregator(Sensor_Logs_Objects,'1T')
     return JsonResponse(crispJSONPayload, safe=False) # No need to aggregate under like 24 hours - it takes long to calculate
 
 def last_48_hours(request):
     time_frame = datetime.datetime.now() - datetime.timedelta(hours=48)
-    AtmosphericObjects = Atmospheric.objects.filter(time__gt=time_frame).order_by('-time')
-    crispJSONPayload = data_aggregator(AtmosphericObjects,'2T')
+    Sensor_Logs_Objects = Sensor_Logs.objects.filter(time__gt=time_frame).order_by('-time')
+    crispJSONPayload = data_aggregator(Sensor_Logs_Objects,'5T')
     return JsonResponse(crispJSONPayload, safe=False) # No need to aggregate under like 24 hours - it takes long to calculate
-
-
-def latest_sample(request):
-    time_frame = datetime.datetime.now() - datetime.timedelta(hours=2) 
-    AtmosphericObjects = Atmospheric.objects.filter(time__gt=time_frame).order_by('-time')[:1]
-    crispJSONPayload = single_record(AtmosphericObjects)
-    return JsonResponse(crispJSONPayload, safe=False)
 
 def latest_samples(request):
     time_frame = datetime.datetime.now() - datetime.timedelta(hours=1) 
-    AtmosphericObjects = Atmospheric.objects.filter(time__gt=time_frame).order_by('-time')[:1]
-    crispJSONPayload = single_record(AtmosphericObjects)
+    Sensor_Logs_Objects = Sensor_Logs.objects.filter(time__gt=time_frame).order_by('-time')[:1]
+    crispJSONPayload = single_record(Sensor_Logs_Objects)
     return JsonResponse(crispJSONPayload, safe=False)
 

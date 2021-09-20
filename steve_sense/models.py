@@ -9,24 +9,32 @@ from django.db import models
 from django_pandas.managers import DataFrameManager
 
 
-class Atmospheric(models.Model):
+class Sensor_Logs(models.Model):
     time = models.DateTimeField(unique=True, primary_key=True)
     temperature = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
     humidity = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
-    kpa = models.DecimalField(max_digits = 8, decimal_places=2, blank=True, null=True)
     vpd = models.DecimalField(max_digits = 8, decimal_places=2, blank=True, null=True)
+    lux = models.DecimalField(max_digits = 9, decimal_places=2, blank=True, null=True)
+    soil_moisture = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    sensor_id = models.CharField(max_length=24)
 
     objects = DataFrameManager()
     
     class Meta:
         app_label = 'steve_sense'
 
-class Atmospheric_Live(models.Model):
-    time = models.DateTimeField(unique=True, primary_key=True)
-    live_temperature = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
-    live_humidity = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
-    live_kpa = models.DecimalField(max_digits = 8, decimal_places=2, blank=True, null=True)
-    live_vpd = models.DecimalField(max_digits = 8, decimal_places=2, blank=True, null=True)
+
+
+class Environmental_Settings(models.Model):
+    light_on = models.DateTimeField(blank=True, null=True)
+    light_duration = models.DateTimeField(blank=True, null=True)
+    temperature_max = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
+    temperature_min = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
+    humidity_max = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
+    humidity_min = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
+
+    vpd_targeting = models.BooleanField()
+    vpd_target = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
 
     objects = DataFrameManager()
     
