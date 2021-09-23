@@ -26,7 +26,7 @@ class Sensor_Logs(models.Model):
 
 
 class Environmental_Settings(models.Model):
-    light_on = models.DateTimeField(blank=True, null=True)
+    light_on = models.TimeField(blank=True, null=True)
     light_duration = models.DurationField(blank=True, null=True)
     temperature_max = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
     temperature_min = models.DecimalField(max_digits = 6, decimal_places=2, blank=True, null=True)
@@ -39,3 +39,4 @@ class Environmental_Settings(models.Model):
     
     class Meta:
         app_label = 'steve_sense'
+        
