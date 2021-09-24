@@ -395,6 +395,12 @@ function chartMin_24hours() {
     return min_time
 }
 
+function chartMax_time() {
+    let now_time = new Date();
+    max_time = now_time.setHours(now_time.getHours());
+    return max_time
+}
+
 let width, height, gradient;
 function getGradient_Temps(ctx, chartArea) {
     const chartWidth = chartArea.right - chartArea.left;
@@ -460,12 +466,7 @@ function getGradient_Lux(ctx, chartArea) {
     return gradient;
 }
 
-$.getJSON("http://10.0.0.8/last_24_hours", function (data) {
-    addData(enviro_chart, data);
-    addData(vpd_chart, data);
-}).done(function () {
-    //stuff maybe...? 
-});
+
 
 // ENVIRO chart 
 const enviro_chart_ctx = document.getElementById('enviro_chart').getContext('2d');
@@ -544,6 +545,7 @@ const enviro_chart = new Chart(enviro_chart_ctx, {
         spanGaps: true,
         scales: {
             x: {
+                max: chartMax_time().valueOf(),
                 min: chartMin_24hours().valueOf(),
                 bounds: 'ticks',
                 type: 'time',
@@ -668,12 +670,17 @@ const vpd_chart = new Chart(vpd_ctx, {
         spanGaps: true,
         scales: {
             x: {
+                max: chartMax_time().valueOf(),
                 min: chartMin_24hours().valueOf(),
                 bounds: 'ticks',
                 type: 'time',
+                time: {
+                    unit: 'hour',
+                },
                 ticks: {
                     color: "#ffffff"
                 },
+
                 grid: {
                     drawBorder: true,
                     color: "#666666"
@@ -729,6 +736,7 @@ function addData(chart, data) {
             dataset.data.push(data[x]);
         });
     }
+    chart.options.scales.x.max = chartMax_time().valueOf(); //make sure to keep the max time as current as possible
     chart.update();
 }
 
@@ -739,6 +747,13 @@ function removeData(chart) {
     });
     chart.update();
 }
+
+$.getJSON("http://10.0.0.8/last_24_hours", function (data) {
+    addData(enviro_chart, data);
+    addData(vpd_chart, data);
+}).done(function () {
+    //stuff maybe...? 
+});
 
 let last_timestamp; // keep tabs on what the last thing added to the charts were
 function fetch_more_samples() {
@@ -764,5 +779,5 @@ function initialise_gauges() {
 
 }
 
-setInterval(fetch_more_samples, 10000);
+setInterval(fetch_more_samples, 2000);
 
