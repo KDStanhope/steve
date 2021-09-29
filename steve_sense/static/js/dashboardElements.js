@@ -384,14 +384,9 @@ function updateGauges(data) {
 //CHARTS! 8[
 
 
-function chartMin_48hours() {
+function chartMin(hours) {
     let now_time = new Date();
-    let min_time = now_time.setHours(now_time.getHours() - 48);
-    return min_time
-}
-function chartMin_24hours() {
-    let now_time = new Date();
-    let min_time = now_time.setHours(now_time.getHours() - 24);
+    let min_time = now_time.setHours(now_time.getHours() - hours);
     return min_time
 }
 
@@ -546,7 +541,7 @@ const enviro_chart = new Chart(enviro_chart_ctx, {
         scales: {
             x: {
                 max: chartMax_time().valueOf(),
-                min: chartMin_24hours().valueOf(),
+                min: chartMin(24).valueOf(),
                 bounds: 'ticks',
                 type: 'time',
 
@@ -671,7 +666,7 @@ const vpd_chart = new Chart(vpd_ctx, {
         scales: {
             x: {
                 max: chartMax_time().valueOf(),
-                min: chartMin_24hours().valueOf(),
+                min: chartMin(24).valueOf(),
                 bounds: 'ticks',
                 type: 'time',
                 time: {
