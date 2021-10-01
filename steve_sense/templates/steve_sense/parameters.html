@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+
+    <script type="text/javascript" src="js/gauge.min.js"></script>
+
+    <script type="text/javascript" src="js/chart.min.js"></script>
+
+    <script type="text/javascript" src="js/jquery.min"></script>
+
+    <script type="text/javascript" src="js/chartjs-plugin-crosshair.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+    <style>
+        body {
+            background: rgb(32, 32, 32) !important;
+        }
+
+        h1.shine {
+            text-shadow: 0px 0px 20px #666666;
+        }
+
+        h2.shine {
+            text-shadow: 0px 0px 18px #666666;
+        }
+
+        h3.shine {
+            text-shadow: 0px 0px 16px #666666;
+        }
+
+        h4.shine {
+            text-shadow: 0px 0px 12px #666666;
+        }
+
+        h5.shine {
+            text-shadow: 0px 0px 8px #666666;
+        }
+
+        h6.shine {
+            text-shadow: 0px 0px 8px #666666;
+        }
+
+        div.light-text {
+            color: #888888;
+            font-size: 75%;
+            font-style: italic;
+        }
+
+
+        /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+
+        .img-fluid {
+            height: 90px;
+            filter: invert(100%);
+        }
+
+        .img-fluid-secondary {
+            height: 70px;
+            filter: invert(100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="d-flex row justify-content-evenly align-items-baseline">
+            <div class="col-md-auto">
+                <a href="http://10.0.0.8/parameters">
+                    <img class="img-fluid-secondary" alt="..." src="SteveSenseStats.png">
+                </a>
+            </div>
+            <div class="col-md-auto">
+                <img src="SteveSenseLogo.png" class="img-fluid" alt="...">
+            </div>
+            <div class="col-md-auto">
+                <a href="http://10.0.0.8/parameters">
+                    <img class="img-fluid-secondary" alt="..." src="SteveSenseParams.png">
+                </a>
+            </div>
+        </div>
+
+        <hr class="text-light">
+
+    </div>
+    <!--HEADER-->
+    <div class="container-lg">
+        <form class="row g-1">
+            <h1 class="shine text-light d-flex row justify-content-evenly align-items-baseline">Climate Control</h1>
+            <div class="row-lg">
+                <h3 class="shine text-light d-flex row justify-content-evenly align-items-baseline pt-4">Lighting</h3>
+                <div class="form-control-lg row-lg shadow rounded m-2 ">
+                    <!--Setting-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Light Timer-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable Light
+                                Timer</label>
+                        </div>
+                        <hr class="text-light my-1 my-1">
+
+                        <!--Light On -->
+                        <div class="row mx-3">
+                            <div class="col-md-2">
+                                <label for="light_on" class="text-light md-2">Light On (HH:MM)</label>
+                                <input type="time" class="form-control input-sm" id="light_on">
+                            </div>
+                            <!--Duration-->
+                            <div class="col-md-2">
+                                <label for="light_duration" class="text-light md-2">Duration (HH:MM)</label>
+                                <input type="time" class="form-control" id="light_duration">
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    'Light On' specifies what time the light comes on.
+                                    <br><br>
+                                    'Duration' dictates for how long the light will remain on.
+
+                                </p>
+                            </div>
+                        </div>
+                        <br class="my-1">
+                    </div>
+                    <!--Setting-->
+                    <!--Setting-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Light Intensity-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable Light
+                                Intensity</label>
+                        </div>
+                        <hr class="text-light my-1">
+                        <!--Intensity Timing Pattern -->
+                        <div class="row mx-3">
+                            <div class="col-md-4">
+                                <label for="light_timing_pattern" class="text-light m-1">Timing
+                                    Pattern</label>
+                                <canvas id="light_timing_pattern" height="80"></canvas>
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    The 'Intensity Timing Pattern' is created by entering a minimum of
+                                    2 Time & intensity(%) values
+                                    <br>
+
+
+                                </p>
+                            </div>
+                        </div>
+                        <br class="my-3">
+                    </div>
+                    <!--Setting-->
+                    <!--Setting-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Light Rail-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable Light
+                                Rail</label>
+                        </div>
+                        <hr class="text-light my-1">
+                        <!--Auto-Sync -->
+                        <div class="row mx-3">
+                            <div class="form-check form-switch col-md-4 mr-0">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2"
+                                    for="flexSwitchCheckDefault">Auto-Sync</label>
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    The 'Auto-Sync Light Rail' feature will start the light rail when the light is first
+                                    powered
+                                    and scale the speed until it reaches its end-point when the light goes off.
+                                    <br><br>
+                                    Use the controls to add points.
+
+                                </p>
+                            </div>
+                        </div>
+                        <!--Auto-Sync -->
+                        <!--Setting-->
+                        <div class="row-xl m-3 justify-content-between">
+                            <!--Light Timer-->
+                            <div class="form-check form-check-inline form-switch col-md-6">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                    Light Rail
+                                    Timer</label>
+                            </div>
+                            <hr class="text-light my-1">
+
+                            <!--Light On -->
+                            <div class="row mx-3">
+                                <div class="col-md-2">
+                                    <label for="light_on" class="text-light md-2">Rail Start (HH:MM)</label>
+                                    <input type="time" class="form-control input-sm" id="light_on">
+                                </div>
+                                <!--Duration-->
+                                <div class="col-md-2">
+                                    <label for="light_duration" class="text-light md-2">Duration (HH:MM)</label>
+                                    <input type="time" class="form-control" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        'Rail Start' specifies what time the light rail will start moving.
+                                        <br><br>
+                                        'Duration' dictates how long it should take to reach its end-point.
+
+                                    </p>
+                                </div>
+                            </div>
+                            <br class="my-3">
+                        </div>
+                        <br class="my-3">
+                    </div>
+                    <!--Setting-->
+                </div>
+                <h3 class="shine text-light d-flex row justify-content-evenly align-items-baseline pt-4">Atmospheric
+                </h3>
+                <div class="form-control-lg row-lg shadow rounded m-2 ">
+                    <!--Setting-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Circulating Fans-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable Circulating Fans</label>
+                        </div>
+                        <hr class="text-light my-1">
+
+                         <!--Circulating Fans Timing Pattern -->
+                        <div class="row mx-3">
+                            <div class="col-md-4">
+                                <label for="circulating_fans_timing_pattern" class="text-light m-1">Timing
+                                    Pattern</label>
+                                <canvas id="circulating_fans_timing_pattern" height="80"></canvas>
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    The 'Intensity Timing Pattern' is created by entering a minimum of
+                                    2 Time & intensity(%) values
+                                    <br>
+
+
+                                </p>
+                            </div>
+                        </div>
+                        <br class="my-1">
+                    </div>
+                    <!--Setting-->
+                </div>
+                <button type="submit" class="btn btn-primary m-3">Submit</button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <script>
+
+    </script>
+
+
+</html>
