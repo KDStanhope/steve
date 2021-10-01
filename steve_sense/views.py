@@ -62,6 +62,9 @@ def parameters(request):
 def steve(request):
     return render(request, "steve_sense/STEVE.html", {})
 
+def parameters(request):
+    return render(request, "steve_sense/SteveMon_Settings.html", {})
+    
 def index(request):
     return render(request, "steve_sense/overview.html", {})
 
