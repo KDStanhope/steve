@@ -12,7 +12,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
-    </script>
+        </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -79,6 +79,10 @@
             height: 70px;
             filter: invert(100%);
         }
+
+        .disabled {
+            opacity: 0.3;
+        }
     </style>
 </head>
 
@@ -105,31 +109,33 @@
     </div>
     <!--HEADER-->
     <div class="container-lg">
-        <form class="row g-1">
-            <h1 class="shine text-light d-flex row justify-content-evenly align-items-baseline">Climate Control</h1>
-            <div class="row-lg">
+        <form class="row-lg">
+            <h1 class="shine text-light d-flex row justify-content-center align-items-baseline">Climate Control</h1>
+            <div class="row">
+
                 <h3 class="shine text-light d-flex row justify-content-evenly align-items-baseline pt-4">Lighting</h3>
-                <div class="form-control-lg row-lg shadow rounded m-2 ">
-                    <!--Setting-->
-                    <div class="row-xl m-2 justify-content-between">
+
+                <!--Lighting Panel-->
+                <div class="form-control-lg row-lg shadow rounded">
+                    <!--Setting Enable Light Timer-->
+                    <div class="row-xl justify-content-between">
                         <!--Light Timer-->
-                        <div class="form-check form-check-inline form-switch col-md-6">
+                        <div class="form-check form-check-inline form-switch align-items-middle col-md">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable Light
+                            <label class="form-check-label text-light" for="flexSwitchCheckDefault">Enable Light
                                 Timer</label>
                         </div>
                         <hr class="text-light my-1 my-1">
-
                         <!--Light On -->
                         <div class="row mx-3">
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label for="light_on" class="text-light md-2">Light On (HH:MM)</label>
-                                <input type="time" class="form-control input-sm" id="light_on">
+                                <input type="time" class="form-control form-control-sm" id="light_on">
                             </div>
                             <!--Duration-->
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label for="light_duration" class="text-light md-2">Duration (HH:MM)</label>
-                                <input type="time" class="form-control" id="light_duration">
+                                <input type="time" class="form-control form-control-sm" id="light_duration">
                             </div>
                             <!--Explanation-->
                             <div class="col-md-5 m-3 px-5 light-text align-middle">
@@ -144,7 +150,8 @@
                         <br class="my-1">
                     </div>
                     <!--Setting-->
-                    <!--Setting-->
+
+                    <!--Setting Enable Light Intensity-->
                     <div class="row-xl m-2 justify-content-between">
                         <!--Light Intensity-->
                         <div class="form-check form-check-inline form-switch col-md-6">
@@ -155,7 +162,7 @@
                         <hr class="text-light my-1">
                         <!--Intensity Timing Pattern -->
                         <div class="row mx-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="light_timing_pattern" class="text-light m-1">Timing
                                     Pattern</label>
                                 <canvas id="light_timing_pattern" height="80"></canvas>
@@ -174,7 +181,8 @@
                         <br class="my-3">
                     </div>
                     <!--Setting-->
-                    <!--Setting-->
+
+                    <!--Setting Enable Light Rail-->
                     <div class="row-xl m-2 justify-content-between">
                         <!--Light Rail-->
                         <div class="form-check form-check-inline form-switch col-md-6">
@@ -183,9 +191,31 @@
                                 Rail</label>
                         </div>
                         <hr class="text-light my-1">
+
                         <!--Auto-Sync -->
+                        <div class="row mx-3 disabled">
+                            <!--Light Rail Start -->
+                            <div class="col-md-3">
+                                <label for="light_on" class="text-light md-2 ">Rail Start (HH:MM)</label>
+                                <input type="time" class="form-control form-control-sm" id="light_on" disabled>
+                            </div>
+                            <!--Light Rail Duration-->
+                            <div class="col-md-3">
+                                <label for="light_duration" class="text-light md-2">Duration (HH:MM)</label>
+                                <input type="time" class="form-control form-control-sm" id="light_duration" disabled>
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    'Rail Start' specifies what time the light rail will start moving.
+                                    <br>
+                                    'Duration' dictates how long it should take to reach its end-point.
+                                </p>
+                            </div>
+                        </div>
+                        <br class="my-2">
                         <div class="row mx-3">
-                            <div class="form-check form-switch col-md-4 mr-0">
+                            <div class="col-md-6">
                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
                                 <label class="form-check-label text-light mx-2"
                                     for="flexSwitchCheckDefault">Auto-Sync</label>
@@ -196,66 +226,32 @@
                                     The 'Auto-Sync Light Rail' feature will start the light rail when the light is first
                                     powered
                                     and scale the speed until it reaches its end-point when the light goes off.
-                                    <br><br>
-                                    Use the controls to add points.
-
                                 </p>
                             </div>
-                        </div>
-                        <!--Auto-Sync -->
-                        <!--Setting-->
-                        <div class="row-xl m-3 justify-content-between">
-                            <!--Light Timer-->
-                            <div class="form-check form-check-inline form-switch col-md-6">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                                <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
-                                    Light Rail
-                                    Timer</label>
-                            </div>
-                            <hr class="text-light my-1">
-
-                            <!--Light On -->
-                            <div class="row mx-3">
-                                <div class="col-md-2">
-                                    <label for="light_on" class="text-light md-2">Rail Start (HH:MM)</label>
-                                    <input type="time" class="form-control input-sm" id="light_on">
-                                </div>
-                                <!--Duration-->
-                                <div class="col-md-2">
-                                    <label for="light_duration" class="text-light md-2">Duration (HH:MM)</label>
-                                    <input type="time" class="form-control" id="light_duration">
-                                </div>
-                                <!--Explanation-->
-                                <div class="col-md-5 m-3 px-5 light-text align-middle">
-                                    <p class="font-italic">
-                                        'Rail Start' specifies what time the light rail will start moving.
-                                        <br><br>
-                                        'Duration' dictates how long it should take to reach its end-point.
-
-                                    </p>
-                                </div>
-                            </div>
-                            <br class="my-3">
                         </div>
                         <br class="my-3">
                     </div>
                     <!--Setting-->
                 </div>
+
                 <h3 class="shine text-light d-flex row justify-content-evenly align-items-baseline pt-4">Atmospheric
                 </h3>
-                <div class="form-control-lg row-lg shadow rounded m-2 ">
-                    <!--Setting-->
+
+                <!--ATMOSPHERIC Panel-->
+                <div class="form-control-lg row-lg shadow rounded">
+                    <!--Setting Enable Circulating Fans-->
                     <div class="row-xl m-2 justify-content-between">
                         <!--Circulating Fans-->
                         <div class="form-check form-check-inline form-switch col-md-6">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable Circulating Fans</label>
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                Circulating Fans</label>
                         </div>
                         <hr class="text-light my-1">
 
-                         <!--Circulating Fans Timing Pattern -->
+                        <!--Circulating Fans Timing Pattern -->
                         <div class="row mx-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="circulating_fans_timing_pattern" class="text-light m-1">Timing
                                     Pattern</label>
                                 <canvas id="circulating_fans_timing_pattern" height="80"></canvas>
@@ -266,25 +262,323 @@
                                     The 'Intensity Timing Pattern' is created by entering a minimum of
                                     2 Time & intensity(%) values
                                     <br>
-
-
                                 </p>
                             </div>
                         </div>
                         <br class="my-1">
                     </div>
                     <!--Setting-->
-                </div>
-                <button type="submit" class="btn btn-primary m-3">Submit</button>
-            </div>
 
+                    <!--Setting Enable Heating-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Heating-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                Heating</label>
+                        </div>
+                        <hr class="text-light my-1 my-1">
+                        <div class="row mx-3">
+                            <!--duty cycle-->
+                            <div class="form-check form-check-inline form-switch col-md-6 mb-2">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                    Duty Cycle</label>
+                            </div>
+                            <!--Pulse Width-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Pulse Width (HH:MM)</label>
+                                    <input type="time" class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Time Period -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Time Period (HH:MM)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text">
+                                    <p class="font-italic">
+                                        'Pulse Width' Is the amount of time the device will be powered on in the total
+                                        'Time Period'.
+                                        <br>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Target Temp-->
+                        <div class="row mx-3">
+                            <div class="col-md-3">
+                                <label for="target_heating_temp" class="text-light md-2">Target Temp (10-45°c)</label>
+                                <input type="number" step="0.1" min="10" max="45" class="form-control form-control-sm"
+                                    id="target_heating_temp">
+                            </div>
+                            <!--Target Temp Deviation-->
+                            <div class="col-md-3">
+                                <label for="light_duration" class="text-light md-2">Target Deviation (%)</label>
+                                <input type="number" min="1" max="100" class="form-control form-control-sm"
+                                    id="light_duration">
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 mx-3 mt-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    'Target Temp' is the temperature the system will try to maintain.
+                                    <br><br>
+                                    'Target Deviation' is the allowable deviation from this target.
+                                    <br>
+                                    For Example: 25° Target with 10% Deviation will create a 'buffer' of 2.5° either
+                                    side of the target, effectivey creating a range.
+                                </p>
+                            </div>
+                        </div>
+                        <br class="my-1">
+                    </div>
+                    <!--Setting-->
+
+                    <!--Setting Enable Cooling-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Cooling-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                Cooling</label>
+                        </div>
+                        <hr class="text-light my-1 my-1">
+                        <div class="row mx-3">
+                            <!--duty cycle-->
+                            <div class="form-check form-check-inline form-switch col-md-6 mb-2">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                    Duty Cycle</label>
+                            </div>
+                            <!--Pulse Width-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Pulse Width (HH:MM)</label>
+                                    <input type="time" class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Time Period -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Time Period (HH:MM)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text">
+                                    <p class="font-italic">
+                                        'Pulse Width' Is the amount of time the device will be powered on in the total
+                                        'Time Period'.
+                                        <br>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Target Cooling Temp-->
+                        <div class="row mx-3">
+                            <div class="col-md-3">
+                                <label for="target_cooling_temp" class="text-light md-2">Target Temp
+                                    (10-45°c)</label>
+                                <input type="number" step="0.1" min="10" max="45" class="form-control form-control-sm"
+                                    id="target_cooling_temp">
+                            </div>
+                            <!--Target Deviation-->
+                            <div class="col-md-3">
+                                <label for="light_duration" class="text-light md-2">Target Deviation (%)</label>
+                                <input type="number" min="1" max="100" class="form-control form-control-sm"
+                                    id="light_duration">
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    'Target Temp' is the temperature the system will try to maintain.
+                                    <br><br>
+                                    'Target Deviation' is the allowable deviation from this target.
+                                    <br>
+
+                                </p>
+                            </div>
+
+                            <br class="my-1">
+                        </div>
+                    </div>
+                    <!--Setting-->
+                    <!--Setting Enable Extractor-->
+                    <div class="row-xl m-2 justify-content-between">
+                        <!--Extractor-->
+                        <div class="form-check form-check-inline form-switch col-md-6">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                Extractor</label>
+                        </div>
+                        <hr class="text-light my-1 my-1">
+                        <div class="row m-3">
+                            <!--duty cycle-->
+                            <div class="form-check form-check-inline form-switch col-md-6 mb-2">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Enable
+                                    Duty Cycle</label>
+                            </div>
+                            <!--Pulse Width-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Pulse Width (HH:MM)</label>
+                                    <input type="time" class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Time Period -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Time Period (HH:MM)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        'Pulse Width' Is the amount of time the device will be powered on in the
+                                        total
+                                        'Time Period'.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Humidity Control Targeting-->
+                        <div class="row m-3">
+                            <!--Humidity Control-->
+                            <div class="form-check form-check-inline form-switch col-md-6 mb-2">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2" for="flexSwitchCheckDefault">Humidity
+                                    Control Targeting</label>
+                            </div>
+                            <!--Target Humidity-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Target Humidity (%)</label>
+                                    <input type="percent" min="0" max="100" step="1"
+                                        class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Target Deviation -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Target Deviation (%)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        'Target Humidity' Is what the system will try and acheive by removing humid air.
+                                        <br>
+                                        'Target Deviation'is the allowable deviation from this target.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Differential Analysis-->
+                        <div class="row m-3">
+                            <!--Differential Analysis-->
+                            <div class="form-check form-check-inline form-switch col-md-6 mb-2">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label text-light mx-2"
+                                    for="flexSwitchCheckDefault">Exterior-Differential Analysis</label>
+                            </div>
+                            <!--Explanation-->
+                            <div class="col-md-5 mx-3 px-5 light-text align-middle">
+                                <p class="font-italic">
+                                    'Exterior-Differential Analysis' will use air from outside to replace unfavourable
+                                    air inside based on certain parameters.
+                                    <br>
+                                </p>
+                            </div>
+                            <!--Targets-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Target Temperature (°)</label>
+                                    <input type="percent" min="0" max="100" step="1"
+                                        class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Target Humidity -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Target Humidity (%)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        'Targets' are what the system will try and acheive by removing air.
+                                        <br>
+                                    </p>
+                                </div>
+                            </div>
+                            <!--Targets-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Temperature Deviation (°)</label>
+                                    <input type="percent" min="0" max="100" step="1"
+                                        class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Target Humidity -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Humidity Deviation (%)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        'Target Deviation' is the allowable deviation from the set targets.
+                                        <br>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row mx-3">
+                                <div class="col-md-6 d-flex justify-content-around">
+                                    <div class="col-md-4">
+                                        <label for="target_temp" class="text-light md-2">Temperature/Humidity Bias
+                                            (%)</label>
+                                        <input type="number" min="0" max="100" step="1"
+                                            class="form-control form-control-sm" id="target_temp">
+                                    </div>
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        <br>
+                                        The 'Temperature/Humidity Bias' is the bias given to either when calculating
+                                    </p>
+                                </div>
+                            </div>
+                            <!--Targets-->
+                            <div class="row mx-3">
+                                <div class="col-md-3">
+                                    <label for="target_temp" class="text-light md-2">Target Temperature (°)</label>
+                                    <input type="percent" min="0" max="100" step="1"
+                                        class="form-control form-control-sm" id="target_temp">
+                                </div>
+                                <!--Target Humidity -->
+                                <div class="col-md-3">
+                                    <label for="light_duration" class="text-light md-2">Target Humidity (%)</label>
+                                    <input type="time" class="form-control form-control-sm" id="light_duration">
+                                </div>
+                                <!--Explanation-->
+                                <div class="col-md-5 m-3 px-5 light-text align-middle">
+                                    <p class="font-italic">
+                                        'Targets' are what the system will try and acheive by removing air.
+                                        <br>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary m-3">Submit</button>
         </form>
     </div>
 
-
+</body>
     <script>
 
     </script>
 
 
 </html>
+
+instruction panel to the left. Make touchpad firnedly.
+
+myfarmmap.com
+
+derrick christie
