@@ -54,7 +54,7 @@ def latest_samples(request):
     crispJSONPayload = single_record(Sensor_Logs_Objects)
     return JsonResponse(crispJSONPayload, safe=False)
 
-def parameters(request):
+def space_parameters(request):
     Environmental_Settings_Objects = Environmental_Settings.objects.filter()[:1]
     crispJSONPayload = serializers.serialize('json', Environmental_Settings_Objects)
     return JsonResponse(json.loads(crispJSONPayload), safe=False)
@@ -63,7 +63,7 @@ def steve(request):
     return render(request, "steve_sense/STEVE.html", {})
 
 def parameters(request):
-    return render(request, "steve_sense/SteveMon_Settings.html", {})
+    return render(request, "steve_sense/parameters.html", {})
     
 def index(request):
     return render(request, "steve_sense/overview.html", {})
