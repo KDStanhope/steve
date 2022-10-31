@@ -1,0 +1,174 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" charset="utf-8">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
+    </script>
+
+
+    <script type="text/javascript" src="{% static 'js/chart.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/chartjs-plugin-crosshair.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+
+    <script type="text/javascript" src="https://rawgit.com/naikus/svg-gauge/master/dist/gauge.min.js">
+        // NEW GAUGE LIB Just testing for now 
+    </script>
+
+    <style>
+        body {
+            background: rgb(31, 31, 31) !important;
+        }
+        .dark-mode {
+            background: rgb(31, 31, 31) !important;
+        }
+
+        h1.shine {
+            text-shadow: 0px 0px 20px #666666;
+        }
+
+        h2.shine {
+            text-shadow: 0px 0px 18px #666666;
+        }
+
+        h3.shine {
+            text-shadow: 0px 0px 16px #666666;
+            text-align: center;
+        }
+
+        h4.shine {
+            text-shadow: 0px 0px 12px #666666;
+        }
+
+        h5.shine {
+            text-shadow: 0px 0px 8px #666666;
+        }
+
+        h6.shine {
+            text-shadow: 0px 0px 8px #666666;
+        }
+
+        .form-group {
+            color: rgb(211, 211, 211);
+            text-shadow: 0px 0px 2px #7a7a7a;
+        }
+
+        .errorlist {
+            color: rgb(160, 0, 0);
+            text-shadow: 0px 0px 1px #000000;
+        }
+
+        .img-fluid {
+            height: 2em;
+            filter: invert(100%);
+        }
+
+        .text-grey {
+            color: #666666;
+        }
+
+        /* ------ Default Style ---------- */
+        .gauge-container {
+            width: 100%;
+            background-color: rgba(31,31,31);
+            position: relative;
+        }
+
+        .gauge-container>.label {
+            position: absolute;
+            right: 0;
+            top: 0;
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.5);
+            font-family: monospace;
+            font-size: 1em;
+            padding: 5px 10px;
+        }
+
+        .gauge-container>.gauge .dial {
+            stroke: #334455;
+            stroke-width: 2;
+            fill: rgba(0, 0, 0, 0);
+        }
+
+        .gauge-container>.gauge .value {
+            stroke: rgb(47, 227, 255);
+            stroke-width: 2;
+            fill: rgba(0, 0, 0, 0);
+        }
+
+        .gauge-container>.gauge .value-text {
+            fill: rgb(47, 227, 255);
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        /* ----- Alternate Style ----- */
+        .gauge-container.temperature>.gauge .dial {
+            stroke: #334455;
+            stroke-width: 10;
+        }
+
+        .gauge-container.temperature>.gauge .value {
+            stroke: #F32450;
+            stroke-dasharray: none;
+            stroke-width: 10;
+        }
+
+        .gauge-container.temperature>.gauge .value-text {
+            fill: #d3d3d3;
+            transform: translate3d(0, 0, 0);
+            display: inline-block;
+        }
+
+        .gauge-container.temperature .value-text {
+            color: #d3d3d3;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 1em;
+            position: absolute;
+            bottom: 15%;
+            right: 17%;
+            display: inline-block;
+        }
+    </style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="http://10.0.0.8">
+            <img src="{% static 'SteveSenseLogo.png' %}" class="img-fluid" alt="...">
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            {% block navbar_items %}
+            {% endblock%}
+          </div>
+        </div>
+      </nav>
+    <div class="container">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</body>
+</head>
+
+</html>

@@ -5,6 +5,8 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from datetime import datetime
+from pyexpat import model
 from django.db import models
 from django_pandas.managers import DataFrameManager
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -13,6 +15,7 @@ from django.contrib.postgres.fields import ArrayField
 
 class Space(models.Model):
     space_name = models.CharField(max_length=24, primary_key=True, unique=True)
+    description = models.CharField(max_length=254, blank=True, null=True)
 
     def __str__(self):
         return self.space_name
@@ -36,7 +39,26 @@ class Attached_Sensors(models.Model):
     power_consumption_sensing = models.BooleanField(default=False, blank=True, null=True)
 
     objects = DataFrameManager()
-    
+
+    def __str__(self):
+        return self.sensor_model
+
+    class Meta:
+        app_label = 'steve_sense'
+
+
+class Sensor_Logs(models.Model):
+    time = models.DateTimeField(unique=True, primary_key=True)
+    temperature = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    humidity = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    vpd = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    lux = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
+    soil_moisture = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    sensor = models.ForeignKey(Attached_Sensors, on_delete=models.CASCADE)
+
+    objects = DataFrameManager()
+
+
     class Meta:
         app_label = 'steve_sense'
 
@@ -48,35 +70,57 @@ class Attached_Devices(models.Model):
         (3, 'CH3'),
         (4, 'CH4'),
         (5, 'CH5'),
-        (6, 'CH6'),
+        ##(6, 'CH6'), channel 6 is FUCKED do not use!
         (7, 'CH7'),
         (8, 'CH8'),
         ]
     types_of_devices = [
-        ('light','light'),
-        ('light rail','light rail'),
-        ('heater','heater'),
-        ('extractor','extractor'),
-        ('circulating fans','circulating fans'),
-        ('aircon','aircon'),
-        ('dehumidifier','dehumidifier')
+        ('light','Light'),
+        ('light rail','Light Rail'),
+        ('heater','Heater'),
+        ('extractor','Extractor'),
+        ('circulating fans','Circulating fans'),
+        ('aircon','Aircon'),
+        ('dehumidifier','Dehumidifier')
         ]
-
     id = models.AutoField(unique=True, primary_key=True, blank=True)
     device_type = models.CharField(max_length=24, choices=types_of_devices, unique=True)
     device_relay_channel = models.IntegerField(choices=relay_channels)
     device_duty_cycle = models.BooleanField(default=False, blank=True, null=True)
     duty_cycle_pulse_width = models.DurationField(blank=True, null=True)
-    duty_cycle_time_period = models.DurationField(blank=True, null=True) 
+    duty_cycle_time_period = models.DurationField(blank=True, null=True, default=datetime.max) 
+    device_status = models.BooleanField(default=False, blank=True, null=True)
     space = models.ForeignKey(Space, on_delete=models.CASCADE, blank=True, null=True)
     
     class Meta:
         app_label = 'steve_sense'
 
 
+class Device_Events(models.Model):
+    device_id = models.ForeignKey(Attached_Devices, on_delete=models.CASCADE)
+    time = models.DateTimeField()
+    device_state = models.BooleanField()
+
+    objects = DataFrameManager()
+    
+    class Meta:
+        app_label = 'steve_sense'
+
+
 class Environmental_Settings(models.Model):
-    id = models.IntegerField(unique=True, primary_key=True, auto_created=True)
-    space = models.ForeignKey(Space, on_delete=models.CASCADE, blank=True, null=True)
+    cycles = [
+        ("Seedling","Seedling"),
+        ("Vegetative","Vegetative"),
+        ("Flowering","Flowering"),
+        ("Custom Cycle", "Custom Cycle")
+        ]
+    #id = models.IntegerField(unique=True, primary_key=True, auto_created=True)
+    space = models.OneToOneField(Space, on_delete=models.CASCADE, null=True)
+
+    automation = models.BooleanField(default=False)
+
+    cycle  = models.CharField(max_length=24, choices=cycles, unique=True, default="Custom Cycle")
+
     light_timer = models.BooleanField(default=False)
     light_on = models.TimeField(blank=True, null=True)
     light_duration = models.DurationField(blank=True, null=True)
@@ -92,12 +136,16 @@ class Environmental_Settings(models.Model):
     cooling_target = models.IntegerField(default=20,validators=[MinValueValidator(0),MaxValueValidator(40)])
     cooling_target_deviation = models.DecimalField(max_digits=6, decimal_places=2, default=0.05,validators=[MinValueValidator(0),MaxValueValidator(0.5)])
 
-    extractor_enabled = models.BooleanField(default=False)
     extractor_timer = models.BooleanField(default=False)
     extractor_time_pattern = models.JSONField(blank=True, null=True)
 
     extractor_humidity_control_targeting = models.BooleanField(default=False)
-    extractor_humidity_target_deviation = models.IntegerField(default=70,validators=[MinValueValidator(0),MaxValueValidator(100)])
+    extractor_humidity_target = models.IntegerField(default=60,validators=[MinValueValidator(0),MaxValueValidator(100)])
+    extractor_humidity_target_deviation = models.IntegerField(default=2,validators=[MinValueValidator(0),MaxValueValidator(20)])
+    
+    extractor_temperature_control_targeting = models.BooleanField(default=False)
+    extractor_temperature_target = models.IntegerField(default=25,validators=[MinValueValidator(0),MaxValueValidator(40)])
+    extractor_temperature_target_deviation = models.IntegerField(default=2,validators=[MinValueValidator(0),MaxValueValidator(5)])
     
     extractor_differential_analysis = models.BooleanField(default=False)
     differential_target_deviation = models.DecimalField(max_digits=6, decimal_places=2, default=0.05,validators=[MinValueValidator(0),MaxValueValidator(0.5)])
@@ -108,21 +156,6 @@ class Environmental_Settings(models.Model):
 
     vpd_targeting = models.BooleanField(default=False)
     vpd_target = models.DecimalField(max_digits=6, decimal_places=2, default=0.05,validators=[MinValueValidator(0),MaxValueValidator(2)])
-
-    objects = DataFrameManager()
-    
-    class Meta:
-        app_label = 'steve_sense'
-        
-
-class Sensor_Logs(models.Model):
-    time = models.DateTimeField(unique=True, primary_key=True)
-    temperature = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    humidity = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    vpd = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    lux = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
-    soil_moisture = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    sensor = models.ForeignKey(Attached_Sensors, on_delete=models.CASCADE)
 
     objects = DataFrameManager()
     

@@ -1,0 +1,16 @@
+{% extends 'steve_sense/base.html' %}
+{%load crispy_forms_tags %} 
+{% block content %}
+<br>
+<h3 class="shine text-light text-center">Update Device {{device_instance.name}}</h3>
+<div class="row justify-content-center my-1">
+    <div class="col-lg-auto overflow-auto">
+        <form class="text-light p-2" action="" method="POST"> {% csrf_token %}
+            {{attached_devices_form | crispy}}
+    
+            <input class="btn btn-sm btn-primary" type="submit" value="Save"> <a class="btn btn-sm btn-danger" href="{% url 'delete_device' device_instance.id%}"> Delete</a>
+        </form>
+        <a class="btn btn-secondary btn-sm"  href="{% url 'parameters form' %}" value="Cancel">Cancel</a>
+    </div>
+</div>
+{% endblock %}

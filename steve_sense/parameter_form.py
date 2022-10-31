@@ -8,26 +8,19 @@ class Environmental_Settings_Form(forms.ModelForm):
         model=Environmental_Settings
         fields=[
             'space',
+            'automation',
+            'cycle',
+            #
             'light_timer',
             'light_on',
             'light_duration',
             #
-            'circulating_fans',
-            'circulating_fans_time_pattern',
-            #
-            'heating',
-            'heating_target',
-            'heating_target_deviation',
-            #
-            'cooling',
-            'cooling_target',
-            'cooling_target_deviation',
-            #
-            'extractor_enabled',
-            'extractor_timer',
-            'extractor_time_pattern',
-            #
             'extractor_humidity_control_targeting',
+            'extractor_humidity_target',
             'extractor_humidity_target_deviation',
+            #
+            'extractor_temperature_control_targeting',
+            'extractor_temperature_target',
+            'extractor_temperature_target_deviation',
         ]
         

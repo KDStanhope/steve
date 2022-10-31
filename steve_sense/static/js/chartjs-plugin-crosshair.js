@@ -4,4 +4,789 @@
  * (c) 2021 Chart.js Contributors
  * Released under the MIT license
  */
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(require("chart.js"),require("chart.js/helpers")):"function"==typeof define&&define.amd?define(["chart.js","chart.js/helpers"],e):e((t=t||self).Chart,t.Chart.helpers)}(this,(function(t,e){"use strict";var a={line:{color:"#F66",width:1,dashPattern:[]},sync:{enabled:!0,group:1,suppressTooltips:!1},zoom:{enabled:!0,zoomboxBackgroundColor:"rgba(66,133,244,0.2)",zoomboxBorderColor:"#48F",zoomButtonText:"Reset Zoom",zoomButtonClass:"reset-zoom"},snap:{enabled:!1},callbacks:{beforeZoom:function(t,e){return!0},afterZoom:function(t,e){}}},s={id:"crosshair",afterInit:function(t){if(t.config.options.scales.x){var e=t.config.options.scales.x.type;if("linear"===e||"time"===e||"category"===e||"logarithmic"===e)void 0===t.options.plugins.crosshair&&(t.options.plugins.crosshair=a),t.crosshair={enabled:!1,suppressUpdate:!1,x:null,originalData:[],originalXRange:{},dragStarted:!1,dragStartX:null,dragEndX:null,suppressTooltips:!1,ignoreNextEvents:0,reset:function(){this.resetZoom(t,!1,!1)}.bind(this)},this.getOption(t,"sync","enabled")&&(t.crosshair.syncEventHandler=function(e){this.handleSyncEvent(t,e)}.bind(this),t.crosshair.resetZoomEventHandler=function(e){var a=this.getOption(t,"sync","group");e.chartId!==t.id&&e.syncGroup===a&&this.resetZoom(t,!0)}.bind(this),window.addEventListener("sync-event",t.crosshair.syncEventHandler),window.addEventListener("reset-zoom-event",t.crosshair.resetZoomEventHandler)),t.panZoom=this.panZoom.bind(this,t)}},destroy:function(t){this.getOption(t,"sync","enabled")&&(window.removeEventListener("sync-event",t.crosshair.syncEventHandler),window.removeEventListener("reset-zoom-event",t.crosshair.resetZoomEventHandler))},panZoom:function(t,e){if(0!==t.crosshair.originalData.length){var a=t.crosshair.end-t.crosshair.start,s=t.crosshair.min,r=t.crosshair.max;e<0?(t.crosshair.start=Math.max(t.crosshair.start+e,s),t.crosshair.end=t.crosshair.start===s?s+a:t.crosshair.end+e):(t.crosshair.end=Math.min(t.crosshair.end+e,t.crosshair.max),t.crosshair.start=t.crosshair.end===r?r-a:t.crosshair.start+e),this.doZoom(t,t.crosshair.start,t.crosshair.end)}},getOption:function(t,s,r){return e.valueOrDefault(t.options.plugins.crosshair[s]?t.options.plugins.crosshair[s][r]:void 0,a[s][r])},getXScale:function(t){return t.data.datasets.length?t.scales[t.getDatasetMeta(0).xAxisID]:null},getYScale:function(t){return t.scales[t.getDatasetMeta(0).yAxisID]},handleSyncEvent:function(t,e){var a=this.getOption(t,"sync","group");if(e.chartId!==t.id&&e.syncGroup===a){var s=this.getXScale(t);if(s){var r=void 0===e.original.native.buttons?e.original.native.which:e.original.native.buttons;"mouseup"===e.original.type&&(r=0);var o={type:"click"==e.original.type?"mousemove":e.original.type,chart:t,x:s.getPixelForValue(e.xValue),y:e.original.y,native:{buttons:r},stop:!0};t._eventHandler(o)}}},afterEvent:function(t,e){if(0==t.config.options.scales.x.length)return;let a=e.event;var s=t.config.options.scales.x.type;if("linear"===s||"time"===s||"category"===s||"logarithmic"===xscaleType){var r=this.getXScale(t);if(r)if(t.crosshair.ignoreNextEvents>0)t.crosshair.ignoreNextEvents-=1;else{var o=void 0===a.native.buttons?a.native.which:a.native.buttons;"mouseup"===a.native.type&&(o=0);var i=this.getOption(t,"sync","enabled"),n=this.getOption(t,"sync","group");if(!a.stop&&i)(e=new CustomEvent("sync-event")).chartId=t.id,e.syncGroup=n,e.original=a,e.xValue=r.getValueForPixel(a.x),window.dispatchEvent(e);var c=this.getOption(t,"sync","suppressTooltips");if(t.crosshair.suppressTooltips=a.stop&&c,t.crosshair.enabled="mouseout"!==a.type&&a.x>r.getPixelForValue(r.min)&&a.x<r.getPixelForValue(r.max),!t.crosshair.enabled&&!t.crosshair.suppressUpdate)return a.x>r.getPixelForValue(r.max)&&(t.crosshair.suppressUpdate=!0,t.update("none")),t.crosshair.dragStarted=!1,!1;t.crosshair.suppressUpdate=!1;var l=this.getOption(t,"zoom","enabled");if(1===o&&!t.crosshair.dragStarted&&l&&(t.crosshair.dragStartX=a.x,t.crosshair.dragStarted=!0),t.crosshair.dragStarted&&0===o){t.crosshair.dragStarted=!1;var d=r.getValueForPixel(t.crosshair.dragStartX),h=r.getValueForPixel(t.crosshair.x);Math.abs(t.crosshair.dragStartX-t.crosshair.x)>1&&this.doZoom(t,d,h),t.update("none")}t.crosshair.x=a.x,t.draw()}}},afterDraw:function(t){if(t.crosshair.enabled)return t.crosshair.dragStarted?this.drawZoombox(t):(this.drawTraceLine(t),this.interpolateValues(t),this.drawTracePoints(t)),!0},beforeTooltipDraw:function(t){return!t.crosshair.dragStarted&&!t.crosshair.suppressTooltips},resetZoom:function(t){var e=arguments.length>1&&void 0!==arguments[1]&&arguments[1],a=!(arguments.length>2&&void 0!==arguments[2])||arguments[2];if(a){if(t.crosshair.originalData.length>0)for(var s=0;s<t.data.datasets.length;s++){var r=t.data.datasets[s];r.data=t.crosshair.originalData.shift(0)}t.crosshair.originalXRange.min?(t.options.scales.x.min=t.crosshair.originalXRange.min,t.crosshair.originalXRange.min=null):delete t.options.scales.x.min,t.crosshair.originalXRange.max?(t.options.scales.x.max=t.crosshair.originalXRange.max,t.crosshair.originalXRange.max=null):delete t.options.scales.x.max}t.crosshair.button&&t.crosshair.button.parentNode&&(t.crosshair.button.parentNode.removeChild(t.crosshair.button),t.crosshair.button=!1);var o=this.getOption(t,"sync","enabled");if(!e&&a&&o){var i=this.getOption(t,"sync","group"),n=new CustomEvent("reset-zoom-event");n.chartId=t.id,n.syncGroup=i,window.dispatchEvent(n)}a&&t.update("none")},doZoom:function(t,s,r){if(s>r){var o=s;s=r,r=o}if(!e.valueOrDefault(t.options.plugins.crosshair.callbacks?t.options.plugins.crosshair.callbacks.beforeZoom:void 0,a.callbacks.beforeZoom)(s,r))return!1;if(t.crosshair.dragStarted=!1,t.options.scales.x.min&&0===t.crosshair.originalData.length&&(t.crosshair.originalXRange.min=t.options.scales.x.min),t.options.scales.x.max&&0===t.crosshair.originalData.length&&(t.crosshair.originalXRange.max=t.options.scales.x.max),!t.crosshair.button){var i=document.createElement("button"),n=this.getOption(t,"zoom","zoomButtonText"),c=this.getOption(t,"zoom","zoomButtonClass"),l=document.createTextNode(n);i.appendChild(l),i.className=c,i.addEventListener("click",function(){this.resetZoom(t)}.bind(this)),t.canvas.parentNode.appendChild(i),t.crosshair.button=i}t.options.scales.x.min=s,t.options.scales.x.max=r;var d=0===t.crosshair.originalData.length;if("category"!==t.config.options.scales.x.type)for(var h=0;h<t.data.datasets.length;h++){var g=[],p=0,u=!1,x=!1;d&&(t.crosshair.originalData[h]=t.data.datasets[h].data);for(var m=t.crosshair.originalData[h],v=0;v<m.length;v++){var f=m[v],y=void 0!==f.x?f.x:NaN;y>=s&&!u&&p>0&&(g.push(m[p-1]),u=!0),y>=s&&y<=r&&g.push(f),y>r&&!x&&p<m.length&&(g.push(f),x=!0),p+=1}t.data.datasets[h].data=g}if(t.crosshair.start=s,t.crosshair.end=r,d){var b=this.getXScale(t);t.crosshair.min=b.min,t.crosshair.max=b.max}t.crosshair.ignoreNextEvents=2,t.update("none"),this.getOption(t,"callbacks","afterZoom")(s,r)},drawZoombox:function(t){var e=this.getYScale(t),a=this.getOption(t,"zoom","zoomboxBorderColor"),s=this.getOption(t,"zoom","zoomboxBackgroundColor");t.ctx.beginPath(),t.ctx.rect(t.crosshair.dragStartX,e.getPixelForValue(e.max),t.crosshair.x-t.crosshair.dragStartX,e.getPixelForValue(e.min)-e.getPixelForValue(e.max)),t.ctx.lineWidth=1,t.ctx.strokeStyle=a,t.ctx.fillStyle=s,t.ctx.fill(),t.ctx.fillStyle="",t.ctx.stroke(),t.ctx.closePath()},drawTraceLine:function(t){var e=this.getYScale(t),a=this.getOption(t,"line","width"),s=this.getOption(t,"line","color"),r=this.getOption(t,"line","dashPattern"),o=this.getOption(t,"snap","enabled"),i=t.crosshair.x;o&&t._active.length&&(i=t._active[0].element.x),t.ctx.beginPath(),t.ctx.setLineDash(r),t.ctx.moveTo(i,e.getPixelForValue(e.max)),t.ctx.lineWidth=a,t.ctx.strokeStyle=s,t.ctx.lineTo(i,e.getPixelForValue(e.min)),t.ctx.stroke(),t.ctx.setLineDash([])},drawTracePoints:function(t){for(var e=0;e<t.data.datasets.length;e++){var a=t.data.datasets[e],s=t.getDatasetMeta(e),r=t.scales[s.yAxisID];!s.hidden&&a.interpolate&&(t.ctx.beginPath(),t.ctx.arc(t.crosshair.x,r.getPixelForValue(a.interpolatedValue),3,0,2*Math.PI,!1),t.ctx.fillStyle="white",t.ctx.lineWidth=2,t.ctx.strokeStyle=a.borderColor,t.ctx.fill(),t.ctx.stroke())}},interpolateValues:function(t){for(var e=0;e<t.data.datasets.length;e++){var a=t.data.datasets[e],s=t.getDatasetMeta(e),r=t.scales[s.xAxisID].getValueForPixel(t.crosshair.x);if(!s.hidden&&a.interpolate){var o=a.data,i=o.findIndex((function(t){return t.x>=r})),n=o[i-1],c=o[i];if(t.data.datasets[e].steppedLine&&n)a.interpolatedValue=n.y;else if(n&&c){var l=(c.y-n.y)/(c.x-n.x);a.interpolatedValue=n.y+(r-n.x)*l}else a.interpolatedValue=NaN}}}};t.Chart.register(s),t.Interaction.modes.interpolate=function(e,a,s){for(var r=[],o=0;o<e.data.datasets.length;o++)if(e.data.datasets[o].interpolate){var i=e.getDatasetMeta(o);if(!i.hidden){var n=e.scales[i.xAxisID],c=e.scales[i.yAxisID],l=n.getValueForPixel(a.x);if(!(l>n.max||l<n.min)){var d=e.data.datasets[o].data,h=d.findIndex((function(t){return t.x>=l}));if(-1!==h){var g=d[h-1],p=d[h];if(g&&p)var u=(p.y-g.y)/(p.x-g.x),x=g.y+(l-g.x)*u;if(e.data.datasets[o].steppedLine&&g&&(x=g.y),!isNaN(x)){var m=c.getPixelForValue(x);if(!isNaN(m)){var v={hasValue:function(){return!0},tooltipPosition:function(){return this._model},_model:{x:a.x,y:m},skip:!1,stop:!1,x:l,y:x};r.push({datasetIndex:o,element:v,index:0})}}}}}}var f=t.Interaction.modes.x(e,a,s);for(h=0;h<f.length;h++){var y=f[h];e.data.datasets[y.datasetIndex].interpolate||r.push(y)}return r}}));
+(function (global, factory) {
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('chart.js'), require('chart.js/helpers')) :
+typeof define === 'function' && define.amd ? define(['chart.js', 'chart.js/helpers'], factory) :
+(global = global || self, factory(global.Chart, global.Chart.helpers));
+}(this, (function (chart_js, helpers) { 'use strict';
+
+function Interpolate(chart, e, options) {
+
+	var items = [];
+
+	for (var datasetIndex = 0; datasetIndex < chart.data.datasets.length; datasetIndex++) {
+
+
+		// check for interpolate setting
+		if (!chart.data.datasets[datasetIndex].interpolate) {
+			continue;
+		}
+
+		var meta = chart.getDatasetMeta(datasetIndex);
+		// do not interpolate hidden charts
+		if (meta.hidden) {
+			continue;
+		}
+
+
+		var xScale = chart.scales[meta.xAxisID];
+		var yScale = chart.scales[meta.yAxisID];
+
+		// coord. of mouse cursor
+		var xValue = xScale.getValueForPixel(e.x);
+		var yValue = xScale.getValueForPixel(e.y);
+
+		if (xValue > xScale.max || xValue < xScale.min) {
+			continue;
+		}
+
+		var data = chart.data.datasets[datasetIndex].data;
+		
+		//find first point right of cursor
+		var index = data.findIndex(function(o) {
+			return o.x >= xValue;
+		});
+		
+		/*
+		var index = undefined;
+		var dist = undefined;
+		for(let i = 1; i < data.length; i++)
+		{
+			let new_dist = (data[i].x - xValue)**2 + (data[i].y - yValue)**2;
+			if((dist == undefined || new_dist < dist) && (data[i].x > xValue))
+			{
+				index = i;
+				dist = new_dist;
+			}
+		}*/
+
+		if (index == undefined || index === -1) {
+			continue;
+		}
+
+
+		// linear interpolate value
+		var prev = data[index - 1];
+		var next = data[index];
+
+		// interpolate between two points
+		if (prev && next) {
+			var slope = (next.y - prev.y) / (next.x - prev.x);
+			var interpolatedValue = prev.y + (xValue - prev.x) * slope;
+		}
+
+		if (chart.data.datasets[datasetIndex].steppedLine && prev) {
+			interpolatedValue = prev.y;
+		}
+
+		if (isNaN(interpolatedValue)) {
+			continue;
+		}
+
+		var yPosition = yScale.getPixelForValue(interpolatedValue);
+
+		// do not interpolate values outside of the axis limits
+		if (isNaN(yPosition)) {
+			continue;
+		}
+
+		// create a 'fake' event point
+
+		var fakePoint = {
+			hasValue: function() {
+				return true;
+			},
+			tooltipPosition: function() {
+				return this._model
+			},
+			_model: {x: e.x, y: yPosition},
+			skip: false,
+			stop: false,
+			x: xValue,
+			y: interpolatedValue
+		};
+
+		items.push({datasetIndex: datasetIndex, element: fakePoint, index: 0});
+	}
+
+
+	// add other, not interpolated, items
+	var xItems = chart_js.Interaction.modes.x(chart, e, options);
+	for (index = 0; index < xItems.length; index++) {
+		var item = xItems[index];
+		if (!chart.data.datasets[item.datasetIndex].interpolate) {
+			items.push(item);
+		}
+	}
+
+	return items;
+}
+
+var defaultOptions = {
+	line: {
+		color: '#F66',
+		width: 1,
+		enable_hor: false,
+		dashPattern: []
+	},
+	sync: {
+		enabled: true,
+		group: 1,
+		suppressTooltips: false
+	},
+	zoom: {
+		enabled: true,
+		enable_zoomButton: true,
+		zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',
+		zoomboxBorderColor: '#48F',
+		zoomButtonText: 'Reset Zoom',
+		zoomButtonClass: 'reset-zoom',
+	},
+	snap: { // snap cursor lines to nearest point not mouse cursor
+		enabled: false,
+	},
+	callbacks: {
+		enableZoom: function() {
+			return true;
+		},
+		beforeZoom: function(start, end) {
+			return true;
+		},
+		afterZoom: function(start, end) {
+		},
+		afterResetZoom: function() {
+		},
+		onCursorMoveChange: function(x, y) {
+			// called every time cursor inside chart is moved and gives position of cursor in chart coord system
+			//console.log("default onCursorMoveChange", x, y);
+		}
+	}
+};
+
+var TracePlugin = {
+
+	id: 'crosshair',
+
+	afterInit: function(chart) {
+		
+		if (!chart.config.options.scales.x) {
+			return
+		}
+
+		var xScaleType = chart.config.options.scales.x.type;
+
+		if (xScaleType !== 'linear' && xScaleType !== 'time' && xScaleType !== 'category' && xScaleType !== 'logarithmic') {
+			return;
+		}
+
+		if (chart.options.plugins.crosshair === undefined) {
+			chart.options.plugins.crosshair = defaultOptions;
+		}
+
+		chart.crosshair = {
+			enabled: false,
+			suppressUpdate: false,
+			x: null,
+			y: null,
+			originalData: [],
+			originalXRange: {},
+			dragStarted: false,
+			dragStartX: null,
+			dragEndX: null,
+			suppressTooltips: false,
+			ignoreNextEvents: 0,
+			// add functions here to expose them to the outside
+			reset: function() {
+				//this.resetZoom(chart, false, false);
+				this.resetZoom(chart);
+			}.bind(this)
+		};
+
+		var syncEnabled = this.getOption(chart, 'sync', 'enabled');
+		if (syncEnabled) {
+			chart.crosshair.syncEventHandler = function(e) {
+				this.handleSyncEvent(chart, e);
+			}.bind(this);
+
+			chart.crosshair.resetZoomEventHandler = function(e) {
+
+				var syncGroup = this.getOption(chart, 'sync', 'group');
+
+				if (e.chartId !== chart.id && e.syncGroup === syncGroup) {
+					this.resetZoom(chart, true);
+				}
+			}.bind(this);
+
+			window.addEventListener('sync-event', chart.crosshair.syncEventHandler);
+			window.addEventListener('reset-zoom-event', chart.crosshair.resetZoomEventHandler);
+		}
+
+		chart.panZoom = this.panZoom.bind(this, chart);
+	},
+
+	destroy: function(chart) {
+		var syncEnabled = this.getOption(chart, 'sync', 'enabled');
+		if (syncEnabled) {
+			window.removeEventListener('sync-event', chart.crosshair.syncEventHandler);
+			window.removeEventListener('reset-zoom-event', chart.crosshair.resetZoomEventHandler);
+		}
+	},
+
+	panZoom: function(chart, increment) {
+		if (chart.crosshair.originalData.length === 0) {
+			return;
+		}
+		var diff = chart.crosshair.end - chart.crosshair.start;
+		var min = chart.crosshair.min;
+		var max = chart.crosshair.max;
+		if (increment < 0) { // left
+			chart.crosshair.start = Math.max(chart.crosshair.start + increment, min);
+			chart.crosshair.end = chart.crosshair.start === min ? min + diff : chart.crosshair.end + increment;
+		} else { // right
+			chart.crosshair.end = Math.min(chart.crosshair.end + increment, chart.crosshair.max);
+			chart.crosshair.start = chart.crosshair.end === max ? max - diff : chart.crosshair.start + increment;
+		}
+
+		this.doZoom(chart, chart.crosshair.start, chart.crosshair.end);
+	},
+
+	getOption: function(chart, category, name) {
+		return helpers.valueOrDefault(chart.options.plugins.crosshair[category] ? chart.options.plugins.crosshair[category][name] : undefined, defaultOptions[category][name]);
+	},
+
+	getXScale: function(chart) {
+		return chart.data.datasets.length ? chart.scales[chart.getDatasetMeta(0).xAxisID] : null;
+	},
+	getYScale: function(chart) {
+		return chart.scales[chart.getDatasetMeta(0).yAxisID];
+	},
+
+	handleSyncEvent: function(chart, e) {
+
+		var syncGroup = this.getOption(chart, 'sync', 'group');
+
+		// stop if the sync event was fired from this chart
+		if (e.chartId === chart.id) {
+			return;
+		}
+
+		// stop if the sync event was fired from a different group
+		if (e.syncGroup !== syncGroup) {
+			return;
+		}
+
+		var xScale = this.getXScale(chart);
+		var yScale = this.getYScale(chart);
+
+		if (!xScale) {
+			return;
+		}
+
+		// Safari fix
+		var buttons = (e.original.native.buttons === undefined ? e.original.native.which : e.original.native.buttons);
+		if (e.original.type === 'mouseup') {
+			buttons = 0;
+		}
+
+
+		var newEvent = {
+			//type: e.original.type == "click" ? "mousemove" : e.original.type,  // do not transmit click events to prevent unwanted changing of synced charts. We do need to transmit a event to stop zooming on synced charts however.
+			chart: chart,
+			x: xScale.getPixelForValue(e.xValue),
+			y: e.original.y,
+			native: {
+				buttons: buttons,
+				type: e.original.type == "click" ? "mousemove" : e.original.type,
+				x: xScale.getPixelForValue(e.xValue),
+				y: e.original.y,
+			},
+			stop: true
+		};
+		chart._eventHandler(newEvent);
+	},
+
+	afterEvent: function(chart, event) {
+
+		if (chart.config.options.scales.x.length == 0) {
+			return
+		}
+
+		let e = event.event;
+
+		var xScaleType = chart.config.options.scales.x.type;
+
+		if (xScaleType !== 'linear' && xScaleType !== 'time' && xScaleType !== 'category' && xscaleType !== 'logarithmic') {
+			return;
+		}
+
+		var xScale = this.getXScale(chart);
+		
+
+		if (!xScale) {
+			return;
+		}
+
+		
+		if(chart.crosshair.ignoreNextEvents > 0) {
+			chart.crosshair.ignoreNextEvents -= 1;
+			return;
+		}
+
+		// fix for Safari
+		var buttons = (e.native.buttons === undefined ? e.native.which : e.native.buttons);
+		if (e.native.type === 'mouseup') {
+			buttons = 0;
+		}
+
+		
+
+		var syncEnabled = this.getOption(chart, 'sync', 'enabled');
+		var syncGroup = this.getOption(chart, 'sync', 'group');
+
+		// fire event for all other linked charts
+		if (!e.stop && syncEnabled) {
+			var event = new CustomEvent('sync-event');
+			event.chartId = chart.id;
+			event.syncGroup = syncGroup;
+			event.original = e;
+			event.xValue = xScale.getValueForPixel(e.x);
+			window.dispatchEvent(event);
+		}
+
+		// suppress tooltips for linked charts
+		var suppressTooltips = this.getOption(chart, 'sync', 'suppressTooltips');
+
+		chart.crosshair.suppressTooltips = e.stop && suppressTooltips;
+
+		chart.crosshair.enabled = (e.type !== 'mouseout' && (e.x > xScale.getPixelForValue(xScale.min) && e.x < xScale.getPixelForValue(xScale.max)));
+
+		if (!chart.crosshair.enabled && !chart.crosshair.suppressUpdate) {
+			if (e.x > xScale.getPixelForValue(xScale.max)) {
+				// suppress future updates to prevent endless redrawing of chart
+				chart.crosshair.suppressUpdate = true;
+				chart.update('none');
+			}
+			chart.crosshair.dragStarted = false; // cancel zoom in progress
+			return false;
+		}
+		chart.crosshair.suppressUpdate = false;
+
+		// handle drag to zoom
+		var enableZoomCallback = helpers.valueOrDefault(chart.options.plugins.crosshair.callbacks ? chart.options.plugins.crosshair.callbacks.enableZoom : undefined, defaultOptions.callbacks.enableZoom);
+		
+		var zoomEnabled = this.getOption(chart, 'zoom', 'enabled') && enableZoomCallback();
+		
+
+		if (buttons === 1 && !chart.crosshair.dragStarted && zoomEnabled) {
+			chart.crosshair.dragStartX = e.x;
+			chart.crosshair.dragStarted = true;
+		}
+
+		// handle drag to zoom
+		if (chart.crosshair.dragStarted && buttons === 0) {
+			chart.crosshair.dragStarted = false;
+
+			var start = xScale.getValueForPixel(chart.crosshair.dragStartX);
+			var end = xScale.getValueForPixel(chart.crosshair.x);
+
+			if (Math.abs(chart.crosshair.dragStartX - chart.crosshair.x) > 1) {
+				this.doZoom(chart, start, end);
+			}
+			chart.update('none');
+		}
+
+		//console.log(e)
+		chart.crosshair.x = e.x;
+		chart.crosshair.y = e.y;
+
+
+		chart.draw();
+
+	},
+
+	afterDraw: function(chart) {
+
+		if (!chart.crosshair || !chart.crosshair.enabled) {
+			return;
+		}
+
+		//console.log("afterDraw");
+		//console.log(chart.options.plugins.crosshair.callbacks);
+		
+		var yScale = this.getYScale(chart);
+		var xScale = this.getXScale(chart);
+		if(xScale == undefined || yScale == undefined)
+			return;
+			
+		var x = xScale.getValueForPixel(chart.crosshair.x);
+		var y = yScale.getValueForPixel(chart.crosshair.y);
+		//console.log(xScale.getValueForPixel(e.x), yScale.getValueForPixel(e.y));
+		//var Callback_onCursorMoveChange = helpers.valueOrDefault(chart.options.plugins.crosshair.callbacks ? chart.options.plugins.crosshair.callbacks.onCursorMoveChange : undefined, defaultOptions.callbacks.onCursorMoveChange);
+		var Callback_onCursorMoveChange = this.getOption(chart, 'callbacks', 'onCursorMoveChange');
+		//console.log(Callback_onCursorMoveChange);
+		Callback_onCursorMoveChange(x, y);
+
+		if (chart.crosshair.dragStarted) {
+			this.drawZoombox(chart);
+		} else {
+			this.drawTraceLine(chart);
+			this.interpolateValues(chart);
+			this.drawTracePoints(chart);
+		}
+
+		return true;
+	},
+
+	beforeTooltipDraw: function(chart) {
+		//console.log(chart.crosshair);
+		if(chart.crosshair == undefined)
+			return false;
+
+		// suppress tooltips on dragging
+		return !chart.crosshair.dragStarted && !chart.crosshair.suppressTooltips;
+	},
+
+	resetZoom: function(chart) {
+
+		var stop = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+		var update = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+		if (update) {
+			if (chart.crosshair.originalData.length > 0) {
+				// reset original data
+				for (var datasetIndex = 0; datasetIndex < chart.data.datasets.length; datasetIndex++) {
+					var dataset = chart.data.datasets[datasetIndex];
+					dataset.data = chart.crosshair.originalData.shift(0);
+				}
+			}
+
+			// reset original xRange
+			if (chart.crosshair.originalXRange.min) {
+				chart.options.scales.x.min = chart.crosshair.originalXRange.min;
+				chart.crosshair.originalXRange.min = null;
+			} else {
+				delete chart.options.scales.x.min;
+			}
+			if (chart.crosshair.originalXRange.max) {
+				chart.options.scales.x.max = chart.crosshair.originalXRange.max;
+				chart.crosshair.originalXRange.max = null;
+			} else {
+				delete chart.options.scales.x.max;
+			}
+		}
+
+		if (chart.crosshair.button && chart.crosshair.button.parentNode) {
+			chart.crosshair.button.parentNode.removeChild(chart.crosshair.button);
+			chart.crosshair.button = false;
+		}
+
+		var syncEnabled = this.getOption(chart, 'sync', 'enabled');
+
+		if (!stop && update && syncEnabled) {
+
+			var syncGroup = this.getOption(chart, 'sync', 'group');
+
+			var event = new CustomEvent('reset-zoom-event');
+			event.chartId = chart.id;
+			event.syncGroup = syncGroup;
+			window.dispatchEvent(event);
+		}
+		if (update) {
+			chart.update('none');
+		}
+
+		var afterResetZoomCallback = this.getOption(chart, 'callbacks', 'afterResetZoom');
+
+		afterResetZoomCallback();
+	},
+
+	doZoom: function(chart, start, end) {
+
+		// swap start/end if user dragged from right to left
+		if (start > end) {
+			var tmp = start;
+			start = end;
+			end = tmp;
+		}
+
+		// notify delegate
+		var beforeZoomCallback = helpers.valueOrDefault(chart.options.plugins.crosshair.callbacks ? chart.options.plugins.crosshair.callbacks.beforeZoom : undefined, defaultOptions.callbacks.beforeZoom);
+
+		if (!beforeZoomCallback(start, end)) {
+			return false;
+		}
+
+		chart.crosshair.dragStarted = false;
+
+		if (chart.options.scales.x.min && chart.crosshair.originalData.length === 0) {
+			chart.crosshair.originalXRange.min = chart.options.scales.x.min;
+		}
+		if (chart.options.scales.x.max && chart.crosshair.originalData.length === 0) {
+			chart.crosshair.originalXRange.max = chart.options.scales.x.max;
+		}
+
+		var enable_ZoomButton = this.getOption(chart, 'zoom', 'enable_zoomButton'); 
+		if (enable_ZoomButton && !chart.crosshair.button) {
+			// add restore zoom button
+			var button = document.createElement('button');
+
+			var buttonText = this.getOption(chart, 'zoom', 'zoomButtonText');
+			var buttonClass = this.getOption(chart, 'zoom', 'zoomButtonClass');
+
+			var buttonLabel = document.createTextNode(buttonText);
+			button.appendChild(buttonLabel);
+			button.className = buttonClass;
+			button.addEventListener('click', function() {
+				this.resetZoom(chart);
+			}.bind(this));
+			chart.canvas.parentNode.appendChild(button);
+			chart.crosshair.button = button;
+		}
+
+		// set axis scale
+		chart.options.scales.x.min = start;
+		chart.options.scales.x.max = end;
+
+		// make a copy of the original data for later restoration
+
+		var storeOriginals = (chart.crosshair.originalData.length === 0) ? true : false;
+
+
+		var filterDataset = (chart.config.options.scales.x.type !== 'category');
+
+		if(filterDataset) {
+
+
+			for (var datasetIndex = 0; datasetIndex < chart.data.datasets.length; datasetIndex++) {
+
+				var newData = [];
+
+				var index = 0;
+				var started = false;
+				var stop = false;
+				if (storeOriginals) {
+					chart.crosshair.originalData[datasetIndex] = chart.data.datasets[datasetIndex].data;
+				}
+
+				var sourceDataset = chart.crosshair.originalData[datasetIndex];
+				if(sourceDataset == undefined)
+					continue;
+
+				for (var oldDataIndex = 0; oldDataIndex < sourceDataset.length; oldDataIndex++) {
+
+					var oldData = sourceDataset[oldDataIndex];
+					// var oldDataX = this.getXScale(chart).getRightValue(oldData)
+					var oldDataX = oldData.x !== undefined ? oldData.x : NaN;
+
+					// append one value outside of bounds
+					if (oldDataX >= start && !started && index > 0) {
+						newData.push(sourceDataset[index - 1]);
+						started = true;
+					}
+					if (oldDataX >= start && oldDataX <= end) {
+						newData.push(oldData);
+					}
+					if (oldDataX > end && !stop && index < sourceDataset.length) {
+						newData.push(oldData);
+						stop = true;
+					}
+					index += 1;
+				}
+
+				chart.data.datasets[datasetIndex].data = newData;
+			}
+		}
+
+		chart.crosshair.start = start;
+		chart.crosshair.end = end;
+
+
+		if (storeOriginals) {
+			var xAxes = this.getXScale(chart);
+			chart.crosshair.min = xAxes.min;
+			chart.crosshair.max = xAxes.max;
+		}
+
+		chart.crosshair.ignoreNextEvents = 2; // ignore next 2 events to prevent starting a new zoom action after updating the chart
+
+		chart.update('none');
+
+
+		var afterZoomCallback = this.getOption(chart, 'callbacks', 'afterZoom');
+
+		afterZoomCallback(start, end);
+	},
+
+	drawZoombox: function(chart) {
+
+		var yScale = this.getYScale(chart);
+
+		var borderColor = this.getOption(chart, 'zoom', 'zoomboxBorderColor');
+		var fillColor = this.getOption(chart, 'zoom', 'zoomboxBackgroundColor');
+
+		chart.ctx.beginPath();
+		chart.ctx.rect(chart.crosshair.dragStartX, yScale.getPixelForValue(yScale.max), chart.crosshair.x - chart.crosshair.dragStartX, yScale.getPixelForValue(yScale.min) - yScale.getPixelForValue(yScale.max));
+		chart.ctx.lineWidth = 1;
+		chart.ctx.strokeStyle = borderColor;
+		chart.ctx.fillStyle = fillColor;
+		chart.ctx.fill();
+		chart.ctx.fillStyle = '';
+		chart.ctx.stroke();
+		chart.ctx.closePath();
+	},
+
+	drawTraceLine: function(chart) {
+		//console.log("drawTraceLine");
+		var yScale = this.getYScale(chart);
+		var xScale = this.getXScale(chart);
+
+		if(yScale == undefined)
+			return;
+		
+
+		var lineWidth = this.getOption(chart, 'line', 'width');
+		var color = this.getOption(chart, 'line', 'color');
+		var dashPattern = this.getOption(chart, 'line', 'dashPattern');
+		var snapEnabled = this.getOption(chart, 'snap', 'enabled');
+
+		var lineX = chart.crosshair.x;
+
+		if (snapEnabled && chart._active.length) {
+			lineX = chart._active[0].element.x;
+			//lineY = chart._active[0].element.y;
+		}
+
+		chart.ctx.beginPath();
+		chart.ctx.setLineDash(dashPattern);
+		chart.ctx.moveTo(lineX, yScale.getPixelForValue(yScale.max));
+		chart.ctx.lineWidth = lineWidth;
+		chart.ctx.strokeStyle = color;
+		chart.ctx.lineTo(lineX, yScale.getPixelForValue(yScale.min));
+		chart.ctx.stroke();
+		chart.ctx.setLineDash([]);
+
+		if(xScale == undefined)
+			return;
+		
+		if(this.getOption(chart, 'line', 'enable_hor'))
+		{
+			
+			var all_interpolate = true;
+			
+			//Version 2: draw horizontal line for every dataset
+			for (var chartIndex = 0; chartIndex < chart.data.datasets.length; chartIndex++) {
+
+				var dataset = chart.data.datasets[chartIndex];
+				var meta = chart.getDatasetMeta(chartIndex);
+	
+				var yScale = chart.scales[meta.yAxisID];
+	
+				if (meta.hidden || !dataset.interpolate) {
+					continue;
+				}
+				all_interpolate = false;
+
+				var lineY = yScale.getPixelForValue(dataset.interpolatedValue);					
+				
+				chart.ctx.beginPath();
+				chart.ctx.setLineDash(dashPattern);
+				chart.ctx.moveTo(xScale.getPixelForValue(xScale.max), lineY);
+				chart.ctx.lineWidth = lineWidth;
+				chart.ctx.strokeStyle = color;
+				chart.ctx.lineTo(xScale.getPixelForValue(xScale.min), lineY);
+				chart.ctx.stroke();
+				chart.ctx.setLineDash([]);
+			}
+
+			if(all_interpolate)
+			{
+				//Version 1: track mouse cursor
+				var xScale = this.getXScale(chart);
+				var lineY = chart.crosshair.y;
+
+
+				if (snapEnabled && chart._active.length) {
+					lineY = chart._active[0].element.y;
+				}
+
+				
+				chart.ctx.beginPath();
+				chart.ctx.setLineDash(dashPattern);
+				chart.ctx.moveTo(xScale.getPixelForValue(xScale.max), lineY);
+				chart.ctx.lineWidth = lineWidth;
+				chart.ctx.strokeStyle = color;
+				chart.ctx.lineTo(xScale.getPixelForValue(xScale.min), lineY);
+				chart.ctx.stroke();
+				chart.ctx.setLineDash([]);
+			}
+	
+		}
+
+	},
+
+	drawTracePoints: function(chart) {
+
+		for (var chartIndex = 0; chartIndex < chart.data.datasets.length; chartIndex++) {
+
+			var dataset = chart.data.datasets[chartIndex];
+			var meta = chart.getDatasetMeta(chartIndex);
+
+			var yScale = chart.scales[meta.yAxisID];
+
+			if (meta.hidden || !dataset.interpolate) {
+				continue;
+			}
+
+			chart.ctx.beginPath();
+			chart.ctx.arc(chart.crosshair.x, yScale.getPixelForValue(dataset.interpolatedValue), 3, 0, 2 * Math.PI, false); // draw circle
+			chart.ctx.fillStyle = 'white';
+			chart.ctx.lineWidth = 2;
+			chart.ctx.strokeStyle = dataset.borderColor;
+			chart.ctx.fill();
+			chart.ctx.stroke();
+
+		}
+
+	},
+
+	interpolateValues: function(chart) {
+
+		for (var chartIndex = 0; chartIndex < chart.data.datasets.length; chartIndex++) {
+
+			var dataset = chart.data.datasets[chartIndex];
+
+			var meta = chart.getDatasetMeta(chartIndex);
+
+			var xScale = chart.scales[meta.xAxisID];
+			var xValue = xScale.getValueForPixel(chart.crosshair.x);
+
+			if (meta.hidden || !dataset.interpolate) {
+				continue;
+			}
+
+			var data = dataset.data;
+			var index = data.findIndex(function(o) {
+				return o.x >= xValue;
+			});
+			var prev = data[index - 1];
+			var next = data[index];
+
+			if (chart.data.datasets[chartIndex].steppedLine && prev) {
+				dataset.interpolatedValue = prev.y;
+			} else if (prev && next) {
+				var slope = (next.y - prev.y) / (next.x - prev.x);
+				dataset.interpolatedValue = prev.y + (xValue - prev.x) * slope;
+			} else {
+				dataset.interpolatedValue = NaN;
+			}
+		}
+
+	}
+
+};
+
+// install plugins
+chart_js.Chart.register(TracePlugin);
+chart_js.Interaction.modes.interpolate = Interpolate;
+
+})));

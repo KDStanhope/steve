@@ -1,0 +1,164 @@
+{% extends 'steve_sense/space.html' %}
+{% block content %}
+<br>
+
+<div class="row justify-content-center">
+   {% for i in attached_devices %}
+<!-- Modal -->
+<div class="modal fade" id="Modal{{i.id}}" tabindex="-1" aria-labelledby="ModalLabel{{i.id}}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content dark-mode">
+        <div class="modal-header">
+          <h5 class="modal-title shine text-light text-center" id="ModalLabel{{i.id}}">{{i.device_type}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-light text-center">
+            <p>{{i.space}}</p>
+            <p>{{i.device_type}}</p>
+            <p>{{i.device_relay_channel}}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--MODAL END-->
+  <!-- Button trigger modal -->
+  <div class="col">
+    <div class="container shadow-sm rounded">
+        <h5 type="button" class="shine text-light text-center m-2" data-bs-toggle="modal" data-bs-target="#Modal{{i.id}}">{{i.device_type}}</h1>
+    </div>
+</div>
+  {% endfor %}
+</div>
+
+<div class="row justify-content-center">
+
+    <!--NEXT DASHBOARD ELEMENT-->
+    <div class="col">
+        <div class="container shadow-sm rounded mb-2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <h1 class="shine text-light text-center">Temperature</h1>
+                    </div>
+                </div>
+                <div class="row justify-content-center shadow-sm rounded">
+                    <div class="col-8 my-auto">
+                        <div class="d-flex justify-content-center">
+                            <div id="temperature_gauge" class="gauge-container temperature">
+                                <span class="value-text">°c</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 shadow-sm rounded">
+                        <div class="row justify-content-center">
+                            <div class="container shadow-sm rounded">
+                                <p class="form-label text-grey text-center">Min</p>
+                                <p class="form-label text-light text-center" id="min_c">°c</p>
+                                <p class="form-label text-grey text-center">Max</p>
+                                <p class="form-label text-light text-center" id="max_c">°c</p>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row justify-content-center">
+                            <div class="container shadow-sm rounded">
+                                <p class="text-grey text-center">Outdoor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row justify-content-center align-items-center my-1">
+                <div class="container-fluid rounded">
+                    <div class="row justify-content-center">
+                        <div class="col rounded">
+                            <canvas id="temp_dash_chart" class="rounded" height="125" style="background-color: #222;">
+                                <!-- Chart Graph thing-->
+                            </canvas>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center m-1">
+                        <div class="col rounded">
+                            <input type="range" class="form-range" min="1" max="168" value="12"
+                                id="tdelta_slider_temperature">
+                            <label for="tdelta_slider_temperature" class="form-label text-grey text-center">Data
+                                Range:</label>
+                            <span> </span>
+                            <span id="slider_value_temperature" class="text-light text-center"> 12</span>
+                            <span class="text-grey text-center"> Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END DASHBOARD ELEMENT-->
+    <br>
+    <!--NEXT DASHBOARD ELEMENT-->
+    <div class="col">
+        <div class="container shadow-sm rounded mb-2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <h1 class="shine text-light text-center">Humidity</h1>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-8 shadow-sm rounded">
+                        <div class="d-flex justify-content-center">
+                            <div id="rh_gauge" class="gauge-container temperature">
+                                <span class="value-text">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 shadow-sm rounded">
+                        <div class="row justify-content-center">
+                            <div class="container shadow-sm rounded">
+                                <p class="form-label text-grey text-center">Min</p>
+                                <p class="form-label text-light text-center" id="min_rh">%</p>
+                                <p class="form-label text-grey text-center">Max</p>
+                                <p class="form-label text-light text-center" id="max_rh">%</p>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row justify-content-center">
+                            <div class="container shadow-sm rounded">
+                                <p class="text-grey text-center">Outdoor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row justify-content-center align-items-center my-1">
+                <div class="container-fluid rounded">
+                    <div class="row justify-content-center">
+                        <div class="col rounded">
+                            <canvas id="rh_dash_chart" class="rounded" height="125" style="background-color: #222;">
+                                <!-- Chart Graph thing-->
+                            </canvas>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center m-1">
+                        <div class="col rounded">
+                            <input type="range" class="form-range" min="1" max="168" value="12" id="tdelta_slider_rh">
+                            <label for="tdelta_slider_rh" class="form-label text-grey text-center">Data Range:</label>
+                            <span> </span>
+                            <span id="slider_value_rh" class="text-light text-center"> 12</span>
+                            <span class="text-grey text-center"> Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END DASHBOARD ELEMENT-->
+
+</div>
+{% load static %}
+<script type="text/javascript" src="{% static 'js/dashboard_elements_NEW.js' %}"></script>
+{% endblock %}

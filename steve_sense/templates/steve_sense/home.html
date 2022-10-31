@@ -1,0 +1,15 @@
+{% extends 'steve_sense/base.html' %}
+{% block content %}
+<br>
+<div class="row row-cols-auto justify-content-evenly">
+    {% for i in spaces %}
+    <div class="col shadow-sm rounded">
+        <div class="card" style="background-color: rgb(31, 31, 31);" >
+            <h1 class="shine text-light text-center">{{ i }}</h1>
+            <p class="text-grey text-center" id="{{i}}">{{ i.description }}</p>
+            <a href="/dashboard" class="stretched-link"></a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
